@@ -1,0 +1,405 @@
+{
+  "summary": {
+    "score": 97.1,
+    "grade": "A",
+    "verdict": "Excellent - ready for deployment",
+    "passed": 23,
+    "warned": 1,
+    "failed": 0,
+    "skipped": 0,
+    "total": 24,
+    "categories": [
+      {
+        "name": "Data Quality",
+        "score": 100.0,
+        "passed": 7,
+        "total": 7
+      },
+      {
+        "name": "Model Performance",
+        "score": 91.66666666666667,
+        "passed": 5,
+        "total": 6
+      },
+      {
+        "name": "Robustness",
+        "score": 100.0,
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "name": "Reliability",
+        "score": 100.0,
+        "passed": 3,
+        "total": 3
+      },
+      {
+        "name": "Fairness & Slices",
+        "score": 100.0,
+        "passed": 2,
+        "total": 2
+      }
+    ],
+    "gate": {
+      "status": "APPROVED",
+      "checks": [
+        {
+          "name": "Hold-out R\u00b2 \u2265 0.85 (regression equivalent of 85% accuracy)",
+          "value": "0.858",
+          "passed": true
+        },
+        {
+          "name": "Demographic parity difference < 10%",
+          "value": "4.4%",
+          "passed": true
+        },
+        {
+          "name": "No target leakage",
+          "value": "0",
+          "passed": true
+        },
+        {
+          "name": "Reproducible predictions",
+          "value": "identical",
+          "passed": true
+        }
+      ]
+    }
+  },
+  "tests": [
+    {
+      "id": "missing_values",
+      "category": "Data Quality",
+      "name": "Missing values handled",
+      "description": "Checks that missing cells are either absent or handled by the pipeline.",
+      "status": "pass",
+      "value": "1.8%",
+      "threshold": "0% or imputed",
+      "details": "1.8% of cells are missing and are filled by imputation.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "duplicates",
+      "category": "Data Quality",
+      "name": "Duplicate rows",
+      "description": "Duplicates inflate test scores because identical rows leak between train and test.",
+      "status": "pass",
+      "value": "0.0%",
+      "threshold": "< 0.5%",
+      "details": "No duplicate rows.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "target_distribution",
+      "category": "Data Quality",
+      "name": "Target distribution (skew)",
+      "description": "A heavily skewed target (like prices) lets a few expensive rows dominate the error.",
+      "status": "pass",
+      "value": "+0.99",
+      "threshold": "|skew| \u2264 1.0",
+      "details": "Skewness of 'price_lakhs' is +0.99.",
+      "fix": null,
+      "data": {
+        "nonneg": true
+      }
+    },
+    {
+      "id": "constant_features",
+      "category": "Data Quality",
+      "name": "Constant features",
+      "description": "Features with a single value carry no information and add noise.",
+      "status": "pass",
+      "value": "0",
+      "threshold": "0",
+      "details": "All features vary.",
+      "fix": null,
+      "data": {
+        "columns": []
+      }
+    },
+    {
+      "id": "outliers",
+      "category": "Data Quality",
+      "name": "Outlier exposure",
+      "description": "Extreme values can dominate distance- and gradient-based models.",
+      "status": "pass",
+      "value": "0.1%",
+      "threshold": "< 1%",
+      "details": "0.1% of numeric values are extreme outliers (|z| > 4).",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "leakage",
+      "category": "Data Quality",
+      "name": "Target leakage",
+      "description": "A feature that is almost perfectly correlated with the target usually leaks the label.",
+      "status": "pass",
+      "value": "0",
+      "threshold": "0",
+      "details": "No feature is suspiciously correlated with the target.",
+      "fix": null,
+      "data": {
+        "columns": []
+      }
+    },
+    {
+      "id": "sample_size",
+      "category": "Data Quality",
+      "name": "Sufficient sample size",
+      "description": "Too few rows per feature leads to unstable, overfitted models.",
+      "status": "pass",
+      "value": "1600 rows",
+      "threshold": "\u2265 10 rows / feature",
+      "details": "1600 usable rows for 8 features (200.0 rows per feature).",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "holdout_r2",
+      "category": "Model Performance",
+      "name": "Hold-out R\u00b2 (accuracy)",
+      "description": "Share of variance explained on unseen data - the regression equivalent of accuracy.",
+      "status": "pass",
+      "value": "0.858",
+      "threshold": "\u2265 0.85",
+      "details": "R\u00b2 0.858, RMSE 19.02, MAE 14.00 on 400 unseen rows.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "mape",
+      "category": "Model Performance",
+      "name": "Mean absolute % error",
+      "description": "Average relative error of the predictions.",
+      "status": "pass",
+      "value": "11.4%",
+      "threshold": "\u2264 15%",
+      "details": "Predictions are off by 11.4% on average.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "cv_r2",
+      "category": "Model Performance",
+      "name": "5-fold cross-validation",
+      "description": "Validation score: k-fold cross-validation inside the training data (the test set is never used).",
+      "status": "warn",
+      "value": "0.814",
+      "threshold": "\u2265 0.85",
+      "details": "Fold R\u00b2: 0.830, 0.815, 0.815, 0.824, 0.789.",
+      "fix": "Tune hyper-parameters or switch model.",
+      "data": {}
+    },
+    {
+      "id": "cv_stability",
+      "category": "Model Performance",
+      "name": "Cross-validation stability",
+      "description": "Large variance between folds means the model is unstable.",
+      "status": "pass",
+      "value": "\u00b10.014",
+      "threshold": "std \u2264 0.03",
+      "details": "Standard deviation across folds is 0.014.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "overfitting",
+      "category": "Model Performance",
+      "name": "Overfitting gap",
+      "description": "Compares training and test R\u00b2; a large gap means memorisation.",
+      "status": "pass",
+      "value": "+0.048",
+      "threshold": "gap \u2264 0.05",
+      "details": "Train R\u00b2 0.906 vs test R\u00b2 0.858.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "valid_range",
+      "category": "Model Performance",
+      "name": "Valid predictions (non-negative)",
+      "description": "Predictions must be finite and positive (a price can never be negative).",
+      "status": "pass",
+      "value": "0.0% invalid",
+      "threshold": "0%",
+      "details": "All predictions are valid and positive.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "noise",
+      "category": "Robustness",
+      "name": "Gaussian noise robustness",
+      "description": "Adds noise (10% of each feature's std) to test inputs and measures the R\u00b2 drop.",
+      "status": "pass",
+      "value": "+0.004",
+      "threshold": "drop \u2264 0.05",
+      "details": "R\u00b2 changes by -0.004 under noise.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "missing_inputs",
+      "category": "Robustness",
+      "name": "Missing values at inference",
+      "description": "Production data is rarely complete - the model must not crash or collapse.",
+      "status": "pass",
+      "value": "+0.040",
+      "threshold": "no crash, drop \u2264 0.08",
+      "details": "With 10% of numeric cells blanked, R\u00b2 changes by -0.040.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "scale_invariance",
+      "category": "Robustness",
+      "name": "Unit-change invariance (metamorphic)",
+      "description": "Changing units of a feature (e.g. metres \u2192 millimetres) must not change predictions.",
+      "status": "pass",
+      "value": "99.2%",
+      "threshold": "\u2265 97% within 2%",
+      "details": "99.2% of predictions stay within 2% after rescaling features and retraining.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "order_invariance",
+      "category": "Robustness",
+      "name": "Training-order invariance (metamorphic)",
+      "description": "Shuffling the order of training rows must not change what the model learns.",
+      "status": "pass",
+      "value": "100.0%",
+      "threshold": "\u2265 97% within 5%",
+      "details": "100.0% of predictions stay within 5% after shuffling training data.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "edge_cases",
+      "category": "Robustness",
+      "name": "Edge-case inputs (generated)",
+      "description": "Auto-generates min/max, zero, out-of-distribution, null, unseen-category and special-character inputs.",
+      "status": "pass",
+      "value": "100.0%",
+      "threshold": "\u2265 99% handled",
+      "details": "190 edge cases generated, 0 crashed or produced invalid output.",
+      "fix": null,
+      "data": {
+        "by_kind": {
+          "minimum value": {
+            "cases": 30,
+            "failed": 0
+          },
+          "maximum value": {
+            "cases": 30,
+            "failed": 0
+          },
+          "zero": {
+            "cases": 30,
+            "failed": 0
+          },
+          "out-of-distribution (10x range)": {
+            "cases": 30,
+            "failed": 0
+          },
+          "null / NaN": {
+            "cases": 40,
+            "failed": 0
+          },
+          "unseen category": {
+            "cases": 10,
+            "failed": 0
+          },
+          "special characters": {
+            "cases": 10,
+            "failed": 0
+          },
+          "empty string": {
+            "cases": 10,
+            "failed": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "adversarial",
+      "category": "Robustness",
+      "name": "Adversarial perturbation (worst-case search)",
+      "description": "Searches 8 adversarial perturbations of \u00b110% std per row for prediction flips.",
+      "status": "pass",
+      "value": "99.6%",
+      "threshold": "\u2265 90% stable",
+      "details": "99.6% of rows stay within 20% under every adversarial perturbation.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "determinism",
+      "category": "Reliability",
+      "name": "Reproducibility",
+      "description": "Training twice with the same seed must give identical predictions.",
+      "status": "pass",
+      "value": "identical",
+      "threshold": "identical",
+      "details": "Two independent trainings produced identical predictions.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "drift",
+      "category": "Reliability",
+      "name": "Train/test drift (PSI)",
+      "description": "Population Stability Index flags features whose distribution shifted between train and test.",
+      "status": "pass",
+      "value": "0.029",
+      "threshold": "PSI \u2264 0.10",
+      "details": "Largest shift is 'distance_to_city_km' with PSI 0.029.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "latency",
+      "category": "Reliability",
+      "name": "Prediction latency",
+      "description": "Time needed to score 1,000 rows.",
+      "status": "pass",
+      "value": "5 ms",
+      "threshold": "\u2264 150 ms / 1k rows",
+      "details": "5 ms per 1,000 predictions (training took 0.11s).",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "slices",
+      "category": "Fairness & Slices",
+      "name": "Data-slice performance",
+      "description": "Compares accuracy (or % error) across slices such as gender, age and region.",
+      "status": "pass",
+      "value": "1.3 pts",
+      "threshold": "extra % error \u2264 8 pts",
+      "details": "Largest extra % error is 1.3 points on 'region'.",
+      "fix": null,
+      "data": {}
+    },
+    {
+      "id": "fairness",
+      "category": "Fairness & Slices",
+      "name": "Fairness: demographic parity difference",
+      "description": "Difference in predicted-outcome rate between groups of a protected attribute must stay below 10%. Demographic parity is one criterion and does not by itself prove a model is fair.",
+      "status": "pass",
+      "value": "4.4%",
+      "threshold": "< 10%",
+      "details": "Largest parity difference is 4.4% on protected attribute 'region'. (group bias for regression: |mean prediction \u2212 mean actual| per group.)",
+      "fix": null,
+      "data": {
+        "columns": [
+          "distance_to_city_km",
+          "region"
+        ]
+      }
+    }
+  ]
+}

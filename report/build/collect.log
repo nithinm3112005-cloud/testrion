@@ -1,0 +1,13 @@
+house_price 75.0 -> 97.1 APPROVED
+iris 92.2 -> 90.5 APPROVED
+wine 61.2 -> 98.3 APPROVED
+churn 76.2 -> 88.5 APPROVED
+credit 75.0 -> 94.5 APPROVED
+used_car_prices 82.4 -> 100.0 APPROVED
+energy_consumption 90.8 -> 97.7 APPROVED
+loan_approval 64.8 -> 97.7 APPROVED
+student_grades 62.5 -> 85.9 BLOCKED
+fraud_transactions 78.7 -> 87.7 APPROVED
+quick_small_test 73.3 -> 80.2 APPROVED
+saved
+done
