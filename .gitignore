@@ -7,3 +7,6 @@ backend/data/*.db
 backend/data/uploads/
 ci-report.json
 .DS_Store
+
+# Local Netlify folder
+.netlify

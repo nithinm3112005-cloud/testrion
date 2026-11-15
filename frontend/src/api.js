@@ -1,3 +1,6 @@
+const API_BASE = import.meta.env.VITE_API_BASE || ""
+const apiFetch = (url, opts) => fetch(API_BASE + url, opts)
+
 const TOKEN_KEY = 'mltestlab_token'
 export const getToken = () => {
   try { return localStorage.getItem(TOKEN_KEY) } catch { return null }
@@ -24,9 +27,9 @@ async function j(res) {
   return res.json()
 }
 
-const get = (url) => fetch(url, { headers: headers() }).then(j)
+const get = (url) => apiFetch(url, { headers: headers() }).then(j)
 const send = (method, url, body) =>
-  fetch(url, { method, headers: headers({ 'Content-Type': 'application/json' }), body: body ? JSON.stringify(body) : undefined }).then(j)
+  apiFetch(url, { method, headers: headers({ 'Content-Type': 'application/json' }), body: body ? JSON.stringify(body) : undefined }).then(j)
 
 export const api = {
   // auth
@@ -43,10 +46,10 @@ export const api = {
   upload: (file) => {
     const fd = new FormData()
     fd.append('file', file)
-    return fetch('/api/datasets', { method: 'POST', headers: headers(), body: fd }).then(j)
+    return apiFetch('/api/datasets', { method: 'POST', headers: headers(), body: fd }).then(j)
   },
   downloadDataset: async (id, name) => {
-    const res = await fetch(`/api/datasets/${encodeURIComponent(id)}/download`, { headers: headers() })
+    const res = await apiFetch(`/api/datasets/${encodeURIComponent(id)}/download`, { headers: headers() })
     if (!res.ok) throw new Error('Could not download the dataset')
     const a = document.createElement('a')
     a.href = URL.createObjectURL(await res.blob())
@@ -66,7 +69,7 @@ export const api = {
   schema: (id) => get(`/api/runs/${id}/schema`),
   predict: (id, values) => send('POST', `/api/runs/${id}/predict`, { values }),
   exportModel: async (id) => {
-    const res = await fetch(`/api/runs/${id}/export`, { headers: headers() })
+    const res = await apiFetch(`/api/runs/${id}/export`, { headers: headers() })
     if (!res.ok) throw new Error('Could not export the model')
     const blob = await res.blob()
     const a = document.createElement('a')
